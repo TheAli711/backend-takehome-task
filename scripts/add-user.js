@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
 const { User } = require("../src/models/user.model");
 
-// Connection URL
 const url = process.env.MONGO_DB_URI;
 
-// Connect to MongoDB
 mongoose.connect(url);
 
 const main = async () => {

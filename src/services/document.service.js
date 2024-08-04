@@ -7,11 +7,38 @@ const getUnweightedDocs = async (search, page, size) => {
     query.title = { $regex: search, $options: "i" };
   }
   const count = await Document.countDocuments(query);
-  const result = await Document.find(query, {
-    projection: { _id: 0, __v: 0 },
-  })
-    .skip((page - 1) * size)
-    .limit(size);
+  const pipeline = [
+    {
+      $lookup: {
+        from: "interactions",
+        localField: "id",
+        foreignField: "docId",
+        as: "interactions",
+      },
+    },
+    {
+      $addFields: {
+        interactions: { $slice: ["$interactions", 10] },
+        interactionCount: { $size: "$interactions" },
+      },
+    },
+    {
+      $skip: (page - 1) * size,
+    },
+    {
+      $limit: size,
+    },
+  ];
+
+  if (search) {
+    pipeline.unshift({
+      $match: {
+        title: { $regex: search, $options: "i" },
+      },
+    });
+  }
+
+  const result = await Document.aggregate(pipeline);
   return {
     total: count,
     currentPage: page,
@@ -67,7 +94,7 @@ const getSortedDocumentsByInteractionsWithAggregation = async (
       {
         $addFields: {
           interactionCount: { $size: "$interactions" },
-          interactions: { $slice: ["$interactions", 5] },
+          interactions: { $slice: ["$interactions", 10] },
         },
       },
       {
@@ -115,7 +142,7 @@ const getSortedDocumentsByInteractionsWithoutAggregation = async (
     const documentsWithInteractionCount = await Promise.all(
       documents.map(async (doc) => {
         const interactions = await Interaction.find({ docId: doc.id })
-          .limit(5)
+          .limit(10)
           .exec();
         const interactionCount = await Interaction.countDocuments({
           docId: doc.id,

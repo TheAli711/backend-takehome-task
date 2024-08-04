@@ -7,7 +7,7 @@ const getDocsUnAuth = catchAsync(async (req, res) => {
   const documents = await documentService.getUnweightedDocs(
     search || null,
     page > 1 ? page : 1,
-    size > 20 ? size : 20
+    size > 10 ? size : 10
   );
   res.json(documents);
 });
@@ -18,7 +18,7 @@ const getDocsAuth = catchAsync(async (req, res) => {
   const documents = await documentService.getWeightedDocs(
     search || null,
     page > 1 ? page : 1,
-    size > 5 ? size : 5
+    size > 10 ? size : 10
   );
   res.json(documents);
 });

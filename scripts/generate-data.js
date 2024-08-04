@@ -2,12 +2,10 @@ const mongoose = require("mongoose");
 const { Document } = require("../src/models/doc.model");
 const { Interaction } = require("../src/models/interaction.model");
 
-// Connection URL
 const url = process.env.MONGO_DB_URI;
 
 (async () => {
   await mongoose.connect(url);
-  // Generate 10,000 documents
   let documents = [];
   await Document.deleteMany({});
   for (let i = 1; i <= 1000; i++) {
@@ -20,15 +18,13 @@ const url = process.env.MONGO_DB_URI;
     );
   }
 
-  // Insert documents into the collection
   await Document.insertMany(documents);
   console.log("Inserted 1,000 documents");
 
-  // Generate 10,000 interactions for 5000
   await Interaction.deleteMany({});
   let interactions = [];
   for (let i = 1; i <= 1000; i++) {
-    const randomNum = Math.floor(Math.random() * 100);
+    const randomNum = Math.floor(Math.random() * (i <= 10 ? 5 : 10));
     for (let j = 0; j < randomNum; j++) {
       const like = Math.random() < 0.5;
       interactions.push(

@@ -1,5 +1,3 @@
-// Make a backend with node js and express js
-
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,7 +10,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// serve static files
+app.use((req, _) => {
+  console.log(`${req.method} ${req.url}`);
+});
+
 app.use(express.static("client/dist"));
 
 routes(app);
@@ -26,3 +27,5 @@ mongoose.connect(process.env.MONGO_DB_URI).then(() => {
     console.log(`Server is running on port ${port}`);
   });
 });
+
+module.exports = app;

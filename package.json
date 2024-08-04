@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "env $(cat .env) nodemon src/index.js",
     "generate-data": "env $(cat .env) node scripts/generate-data.js",
-    "add-user": "env $(cat .env) node scripts/add-user.js"
+    "add-user": "env $(cat .env) node scripts/add-user.js",
+    "test": "mocha 'tests/api.test.js' --exit",
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +20,10 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
     "nodemon": "^3.1.4"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mocha": "^10.7.0",
+    "supertest": "^7.0.0"
   }
 }
